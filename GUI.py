@@ -2,49 +2,57 @@ import customtkinter as ctk
 import keyboard 
 import threading
 
-#global window
+# global window
 app = None 
 
-#tk appearence settings
+# tk appearance settings
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
 def hotkeyListener():
     keyboard.add_hotkey('F12', show_Window)
-    keyboard.wait('') #block thread so it keeps listening
+    keyboard.wait('')  # block thread so it keeps listening
 
 def show_Window():
     global app
     if app is not None and app.winfo_exists():
-        return #already open
-    
-    #window settings
-    app = ctk.CTk() #initialize app
-    app.title("Crash") #name
-    app.geometry("500x250") #size
-    app.attributes('-topmost', True) #always on top
-    app.attributes('-alpha', 0.9) #transparency
-    app.configure(fg="1e1e1e") #foreground color
-    app.configure(bg='black') #background color
+        return  # already open
 
-    #close on escape
+    # window settings
+    app = ctk.CTk()
+    app.title("Crash") #app title
+    app.geometry("500x250") # window size
+    app.attributes('-topmost', True) # keep on top
+    app.attributes('-alpha', 1) #transparency
+    app.configure(fg_color="#1e1e1e")  # correct way in customtkinter
+    app.configure(bg='black')  # not really needed with fg_color, but okay
+
     app.bind("<Escape>", lambda e: app.destroy())
 
-    #text input
-    entry = ctk.CTkEntry(app, width=400, height=40, placeholder_text="Enter your text here")
-    entry.pack(pady=20)
+    # BOTTOM FRAME for input and buttons
+    input_frame = ctk.CTkFrame(app, fg_color="transparent")
+    input_frame.pack(side="bottom", fill="x", pady=10, padx=10)
 
-    #send button
-    send_button = ctk.CTkButton(app, text="Send", command=lambda: print("Send:", entry.get()))
-    send_button.pack()
+    # text input
+    entry = ctk.CTkEntry(input_frame, width=300, height=40, placeholder_text="Enter your text here")
+    entry.pack(side="left", padx=(0, 10))
 
-    #voice toggle button
-    mic_btn = ctk.CTkButton(app, text="Voice", command=lambda: print("Voice toggled"))
-    mic_btn.pack(pady=10)
+    # send button
+    def send_text():
+        print("Send:", entry.get())
+        entry.delete(0, 'end')
 
-    app.mainloop() #start the app
+    send_button = ctk.CTkButton(input_frame, text="Send", width=60, command=send_text)
+    send_button.pack(side="left", padx=(0, 10))
 
-threading.Thread(target=hotkeyListener, daemon=True).start() #start the hotkey listener thread
+    # voice toggle button
+    mic_btn = ctk.CTkButton(input_frame, text="voice", width=40, command=lambda: print("Voice toggled"))
+    mic_btn.pack(side="left")
+
+    app.mainloop()
+
+# start hotkey listener
+threading.Thread(target=hotkeyListener, daemon=True).start()
 
 print("Hotkey listener started. Press F12 to show the window.")
-keyboard.wait('esc') #wait for escape key to exit the program
+keyboard.wait('esc')  # wait for escape to exit
