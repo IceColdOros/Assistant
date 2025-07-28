@@ -46,8 +46,8 @@ def show_Window():
     send_button.pack(side="left", padx=(0, 10))
 
     # voice toggle button
-    mic_btn = ctk.CTkButton(input_frame, text="voice", width=40, command=lambda: print("Voice toggled"))
-    mic_btn.pack(side="left")
+    mic_btn = ctk.CTkButton(input_frame, text="voice", width=60, command=lambda: print("Voice toggled"))
+    mic_btn.pack(side="left", padx=(0, 10))
 
     app.mainloop()
 
