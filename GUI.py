@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import keyboard 
 import threading
+import requests
+import json
 
 # global window
 app = None 
@@ -29,6 +31,8 @@ def show_Window():
 
     app.bind("<Escape>", lambda e: app.destroy())
 
+#GUI
+
     # BOTTOM FRAME for input and buttons
     input_frame = ctk.CTkFrame(app, fg_color="transparent")
     input_frame.pack(side="bottom", fill="x", pady=10, padx=10)
@@ -39,7 +43,7 @@ def show_Window():
 
     # send button
     def send_text():
-        print("Send:", entry.get())
+        print("Send:", entry.get()) 
         entry.delete(0, 'end')
 
     send_button = ctk.CTkButton(input_frame, text="Send", width=60, command=send_text)
@@ -49,33 +53,57 @@ def show_Window():
     mic_btn = ctk.CTkButton(input_frame, text="voice", width=60, command=lambda: print("Voice toggled"))
     mic_btn.pack(side="left", padx=(0, 10))
 
-    app.mainloop()
-
-# start hotkey listener
-threading.Thread(target=hotkeyListener, daemon=True).start()
-
-print("Hotkey listener started. Press F12 to show the window.")
-keyboard.wait('esc')  # wait for escape to exit
+#Backend
 
 
-class LLM():
-    def __init__(self, model_name, model_path, device, max_length):
-        self.model_name = model_name
-        self.model_path = model_path
-        self.device = device
-        self.max_length = max_length
-        # Initialize model here if needed
-        self.model = None  
+def LLM(url, x, payload, response):
+    #base url from ollama (cmd>ollama serve)
+    url = "http://127.0.0.1:11434/api/chat"
+    #we just use above to chat, can use different opperations (add,remove, etc.)
 
-    def textGenerate(self, prompt):
-        # Generate text using the model
-        pass
+    x = input("Enter your prompt: ")  #input prompt for the model
 
-    def voiceGenerate(self, prompt):
-        # Generate voice output using the model
-        pass
+    #input prompt for the model
+    payload = {
+        "model": "deepseek-r1", #modle i want to speak to 
+        "messages": [{
+            "role": "user",
+            "content": x}]
+    }
 
-    #figure out how to let model save previous conversations
+    #send HTTP POST request to the model, with streaming enabled
+    response = requests.post(url, json=payload, stream=True) #stream graps responses as it is typed
+
+    #check response status
+    if response.status_code == 200:
+        print("streaming Ollama response: ") 
+        for line in response.iter_lines(decode_unicode=True):
+            if line: #ignore empty lines
+                try:
+                    #parse each line as a JSON object
+                    json_data = json.loads(line)
+                    #print the content of the response
+                    if "message" in json_data and "content" in json_data["message"]:
+                        print(json_data["message"]["content"], end='', flush=True)
+
+                except json.JSONDecodeError:
+                    print("Error decoding JSON:", line)
+        print()
+    else:
+        print("Error:", response.status_code)
+        print(response.text)  # Print the error message if available 
+
+
+
+def textGenerate(self, prompt):
+    # Generate text using the model
+    pass
+
+def voiceGenerate(self, prompt):
+    # Generate voice output using the model
+    pass
+
+#figure out how to let model save previous conversations
 
 class Calander():
     def __init__(self):
@@ -91,3 +119,14 @@ class Calander():
         self.events.clear()
 
     #add DB so event can be saved and loaded
+
+    app.mainloop()
+
+# start hotkey listener
+threading.Thread(target=hotkeyListener, daemon=True).start()
+
+print("Hotkey listener started. Press F12 to show the window.")
+keyboard.wait('esc')  # wait for escape to exit
+
+
+

@@ -5,12 +5,14 @@ import json
 url = "http://127.0.0.1:11434/api/chat"
 #we just use above to chat, can use different opperations (add,remove, etc.)
 
+x = input("Enter your prompt: ")  #input prompt for the model
+
 #input prompt for the model
 payload = {
     "model": "deepseek-r1", #modle i want to speak to 
     "messages": [{
         "role": "user",
-         "content": "Hello, how are you?"}]
+         "content": x}]
 }
 
 #send HTTP POST request to the model, with streaming enabled
