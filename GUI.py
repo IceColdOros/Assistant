@@ -43,8 +43,48 @@ def show_Window():
 
     # send button
     def send_text():
-        print("Send:", entry.get()) 
+        print("Sending to LLM...", LLM())
         entry.delete(0, 'end')
+
+#backend
+
+    def LLM():
+        #base url from ollama (cmd>ollama serve)
+        url = "http://127.0.0.1:11434/api/chat"
+        #we just use above to chat, can use different opperations (add,remove, etc.)
+
+        x = entry.get() #input prompt for the model
+
+        #input prompt for the model
+        payload = {
+            "model": "deepseek-r1", #modle i want to speak to 
+            "messages": [{
+                "role": "user",
+                "content": x}]
+        }
+
+        #send HTTP POST request to the model, with streaming enabled
+        response = requests.post(url, json=payload, stream=True) #stream graps responses as it is typed
+
+        #check response status
+        if response.status_code == 200:
+            print("streaming Ollama response: ") 
+            for line in response.iter_lines(decode_unicode=True):
+                if line: #ignore empty lines
+                    try:
+                        #parse each line as a JSON object
+                        json_data = json.loads(line)
+                        #print the content of the response
+                        if "message" in json_data and "content" in json_data["message"]:
+                            print(json_data["message"]["content"], end='', flush=True)
+
+                    except json.JSONDecodeError:
+                        print("Error decoding JSON:", line)
+            print()
+        else:
+            print("Error:", response.status_code)
+            print(response.text)  # Print the error message if available
+        
 
     send_button = ctk.CTkButton(input_frame, text="Send", width=60, command=send_text)
     send_button.pack(side="left", padx=(0, 10))
@@ -53,47 +93,7 @@ def show_Window():
     mic_btn = ctk.CTkButton(input_frame, text="voice", width=60, command=lambda: print("Voice toggled"))
     mic_btn.pack(side="left", padx=(0, 10))
 
-#Backend
-
-
-def LLM(url, x, payload, response):
-    #base url from ollama (cmd>ollama serve)
-    url = "http://127.0.0.1:11434/api/chat"
-    #we just use above to chat, can use different opperations (add,remove, etc.)
-
-    x = input("Enter your prompt: ")  #input prompt for the model
-
-    #input prompt for the model
-    payload = {
-        "model": "deepseek-r1", #modle i want to speak to 
-        "messages": [{
-            "role": "user",
-            "content": x}]
-    }
-
-    #send HTTP POST request to the model, with streaming enabled
-    response = requests.post(url, json=payload, stream=True) #stream graps responses as it is typed
-
-    #check response status
-    if response.status_code == 200:
-        print("streaming Ollama response: ") 
-        for line in response.iter_lines(decode_unicode=True):
-            if line: #ignore empty lines
-                try:
-                    #parse each line as a JSON object
-                    json_data = json.loads(line)
-                    #print the content of the response
-                    if "message" in json_data and "content" in json_data["message"]:
-                        print(json_data["message"]["content"], end='', flush=True)
-
-                except json.JSONDecodeError:
-                    print("Error decoding JSON:", line)
-        print()
-    else:
-        print("Error:", response.status_code)
-        print(response.text)  # Print the error message if available 
-
-
+    app.mainloop()
 
 def textGenerate(self, prompt):
     # Generate text using the model
@@ -120,7 +120,6 @@ class Calander():
 
     #add DB so event can be saved and loaded
 
-    app.mainloop()
 
 # start hotkey listener
 threading.Thread(target=hotkeyListener, daemon=True).start()
