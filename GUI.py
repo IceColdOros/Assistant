@@ -34,6 +34,9 @@ def show_Window():
 #GUI
 
     # BOTTOM FRAME for input and buttons
+
+
+
     input_frame = ctk.CTkFrame(app, fg_color="transparent")
     input_frame.pack(side="bottom", fill="x", pady=10, padx=10)
 
