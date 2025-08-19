@@ -23,7 +23,7 @@ def show_Window():
     # window settings
     app = ctk.CTk()
     app.title("Crash") #app title
-    app.geometry("500x250") # window size
+    app.geometry("1100x600") # window size
     app.attributes('-topmost', True) # keep on top
     app.attributes('-alpha', 1) #transparency
     app.configure(fg_color="#1e1e1e")  # correct way in customtkinter
