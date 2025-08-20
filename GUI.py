@@ -1,8 +1,19 @@
+# GUI
 import customtkinter as ctk
+
+# Keyboard
 import keyboard 
 import threading
+
+# Local LLM
 import requests
 import json
+
+# Volume Control
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume, ISimpleAudioVolume
+from comtypes import CLSCTX_ALL
+from ctypes import cast, POINTER
+
 
 # global window
 app = None 
@@ -97,6 +108,8 @@ def show_Window():
     mic_btn.pack(side="left", padx=(0, 10))
 
     app.mainloop()
+
+
 
 def textGenerate(self, prompt):
     # Generate text using the model
