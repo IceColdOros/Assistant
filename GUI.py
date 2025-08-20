@@ -10,7 +10,7 @@ import requests
 import json
 
 # Volume Control
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume, ISimpleAudioVolume
+from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
 from comtypes import CLSCTX_ALL
 from ctypes import cast, POINTER
 
@@ -42,11 +42,6 @@ def show_Window():
 
     app.bind("<Escape>", lambda e: app.destroy())
 
-#GUI
-
-    # BOTTOM FRAME for input and buttons
-
-
 
     input_frame = ctk.CTkFrame(app, fg_color="transparent")
     input_frame.pack(side="bottom", fill="x", pady=10, padx=10)
@@ -59,8 +54,6 @@ def show_Window():
     def send_text():
         print("Sending to LLM...", LLM())
         entry.delete(0, 'end')
-
-#backend
 
     def LLM():
         #base url from ollama (cmd>ollama serve)
@@ -127,9 +120,6 @@ def setAppVolume(app_name, volume_level):
             print(f"Volume for {app_name} set to {volume_level * 100}%")
             return
     print(f"Application '{app_name}' not found.")
-
-    
-
 
 def textGenerate(self, prompt):
     # Generate text using the model
