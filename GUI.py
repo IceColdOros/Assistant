@@ -109,6 +109,26 @@ def show_Window():
 
     app.mainloop()
 
+def setAppVolume(app_name, volume_level):
+# Sets volume of specific application
+    
+    #args:
+    #app_name (str): Name of application
+    #volume_level (float): Desired volume 0.0 to 1.0
+
+    sessions = AudioUtilities.GetAllSessions()
+    for session in sessions:
+        if session.Process and session.Process.name() == app_name:
+            volume = session.SimpleAudioVolume
+            # Gets the ISimpleAudioVolume interface fro sessions
+
+            volume_interface = cast(session.SimpleAudioVolume, POINTER(ISimpleAudioVolume))
+            volume_interface.SetMasterVolume(volume_level, None)
+            print(f"Volume for {app_name} set to {volume_level * 100}%")
+            return
+    print(f"Application '{app_name}' not found.")
+
+    
 
 
 def textGenerate(self, prompt):
