@@ -31,7 +31,7 @@ function App() {
       color: "white", 
       padding: "20px" 
     }}>
-      
+
       {/* Chat messages area */}
       <div id="chat-window" style={{ flex: 1, overflowY: "auto", marginBottom: "10px" }}>
         {messages.map((msg, i) => (
@@ -58,7 +58,6 @@ function App() {
           </div>
         ))}
       </div>
-
 
       {/* Input area */}
       <div style={{ display: "flex" }}>
