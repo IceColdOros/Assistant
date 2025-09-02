@@ -31,25 +31,34 @@ function App() {
       color: "white", 
       padding: "20px" 
     }}>
+      
       {/* Chat messages area */}
       <div id="chat-window" style={{ flex: 1, overflowY: "auto", marginBottom: "10px" }}>
         {messages.map((msg, i) => (
-          <p 
+          <div 
             key={i} 
             style={{ 
-              textAlign: msg.role === "user" ? "right" : "left",
-              backgroundColor: msg.role === "user" ? "#007bff" : "#333",
-              padding: "8px 12px",
-              borderRadius: "8px",
-              display: "inline-block",
-              maxWidth: "70%",
+              display: "flex", 
+              justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
               marginBottom: "8px"
             }}
           >
-            {msg.text}
-          </p>
+            <div
+              style={{
+                backgroundColor: msg.role === "user" ? "#007bff" : "#333",
+                color: "white",
+                padding: "10px 14px",
+                borderRadius: "12px",
+                maxWidth: "70%",
+                wordWrap: "break-word"
+              }}
+            >
+              {msg.text}
+            </div>
+          </div>
         ))}
       </div>
+
 
       {/* Input area */}
       <div style={{ display: "flex" }}>
