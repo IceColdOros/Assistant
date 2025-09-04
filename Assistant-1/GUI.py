@@ -102,6 +102,9 @@ def show_Window():
 
     app.mainloop()
 
+
+
+
 def setAppVolume(app_name, volume_level):
 # Sets volume of specific application
     
@@ -145,6 +148,7 @@ class Calander():
         self.events.clear()
 
     #add DB so event can be saved and loaded
+
 
 
 # start hotkey listener
